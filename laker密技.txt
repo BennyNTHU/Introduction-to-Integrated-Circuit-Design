@@ -1,0 +1,56 @@
+一. 用laker畫layout
+
+A 連線(A+F3改距離)先點A邊的圈圈，再點B邊(不要點到圈圈上) A會移動到離B設定的距離的地方
+把整塊元件圈起來，可以藉此移動整塊元件
+P: 連線(P+F3記得勾auto detect edge) 滑鼠移到要接的地方最後點兩下完成
+C: 複製 複製完後點一下可移動，此時輸入DY(按tab移動到那個輸入欄位)值可以移動到想要的距離後按enter，也可以手動移動。工具列有水平/垂直翻轉。再按>(不要加shift)可重複複製的動作
+R:畫長方形
+Q:更改材質跟長方形邊界
+D:量距離，先點一邊再點另一邊
+esc:退出目前模式
+選取的時候:要整個長方形移動就整個圈起來，只要某些邊移動就圈那些邊就好
+
+打PIN腳:按工具列"Create tesct(標籤是ABC)"，選step，把要打的PIN腳名字輸入(spice檔上的pin腳都要有!)後，按HIDE，然後依序點在各個(按滑鼠右鍵可以旋轉)pin腳預定的位置上上。點好後可以把字選起來，按Q，可以改字體大小
+
+十字型是原點，點toolbox>change origin>左下角>OK
+
+輸出gds檔案:點laker主畫面>file>export>stream>選好cell>output file取inv.gds>OK
+
+二. 跑DRC LVS與PEX驗證
+
+把tool課程中Calibre中DRC LVE LEX的所有檔案分別移動到工作站中VLSI_2021/Calibre資料夾裡面，這些檔案是rule
+在laker資料夾中新增DRC LVS PEX三個資料夾
+
+跑DRC:verify>Calibre>Run DRC 跳出視窗 
+點rule 選好rule跟run directory (在laker/DRC跑)
+點input layout file點剛剛存的inv.gds 
+等所有視窗跑出來 如果有error 在紅色數字上點右鍵->highlight 回到laker看看
+如果有bug 應該會是layout的問題 例如打Pin腳時沒有打在該打的地方
+如果出現什麼"overwrite ....gds?"選Yes (不會怎樣)
+
+跑LVS->在laker/LVS跑
+spice檔案要是最一開始打的那個!(在virtuoso或Hspice/pre-sim裡面)
+其餘跟講義上一樣的作法
+如果有bug 應該會是spice檔案跟layout的問題 例如layout中pin腳名稱沒有跟參考的spice檔對上，或是打Pin腳時沒有打在該打的地方
+如果出現什麼"overwrite ....gds?"選Yes (不會怎樣)
+
+跑PEX->在laker/PEX跑
+spice檔案要是最一開始打的那個!(在virtuoso或Hspice/pre-sim裡面)
+接著把Calibre/PEX的所有檔案都複製到laker/PEX裡面。
+其餘跟講義上一樣的作法
+如果出現什麼"overwrite ....gds?"選Yes (不會怎樣)
+
+三. 用hspice跑模擬
+
+把laker/PEX中的inv.pex.netlist, inv.pex.netlist.INV.pxi, inv.pex.netlist.pex複製到Hspice/post-sim資料夾
+把助教給的cic018.1和inv_tb_post.sp複製到Hspice/post-sim資料夾
+inv_tb_post.sp跟inv.pex.netlist之中port的順序必須要一樣!!!
+輸入指令hspice -i inv_tb_post.sp -o inv_tb_post.lis跑模擬
+(若hspice出現command not found 則輸入source /usr/cadtool/cad/synopsys/CIC/hspice.cshrc激活)
+編輯檔案:getit 檔案名稱 &
+
+跑完後，輸入wv &看波形:post-sim中的inv_tb_post_lis.sw0以及pre-sim的inv_tb.sw0
+若此時有問題 應該都會是hspice code的問題(假設DRC LVS PEX的bug都解完了)
+波形出現後，直接用拖曳的疊圖，疊好以後兩個波形應該會有些許差異(寄生電容造成的)
+
+編輯檔案:gedit 檔案名稱 &

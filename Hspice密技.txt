@@ -1,0 +1,19 @@
+先使用
+ssh -X ws45 登陸ws45(比較好)
+如果東西不能用 就到系上CAD TOOL的網站找激活碼。Hspice的是
+source /usr/cadtool/cad/synopsys/CIC/hspice.cshrc
+
+每次打code要打一個circuit.sp檔以及test.sp檔。circuit.sp是描述電路，circuit_tb.sp是test bench。circuit_tb.sp要include進circuit.sp。
+
+compile可用hspice -i circuit_tb.sp -o circuit_tb.lis &。但大家都用hspice circuit_tb.sp > circuit_tb.lis
+
+點進circuit_tb.lis可看bug或執行結果
+
+使用wv &查看波形
++WaveView:打該另一個分頁
+Measure tool(三角板)>Data(X,Y): 可看圖形各點座標
+
+看直流電流(.DC VVin 0 1.8 0.01)的結果要看.sw0檔案
+看時間要看(.trans 0.1ns 10ns)要看.tr0檔案
+
+要留家傳就只要兩個.sp檔就可了，因為其他都是編譯出來的檔案
